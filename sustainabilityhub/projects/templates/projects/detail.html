@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ project.title }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    {% if project.image %}
+        <img src="{{ project.image.url }}" alt="{{ project.title }}" style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 4px; margin-bottom: 1rem;">
+    {% endif %}
+    <h1>{{ project.title }}</h1>
+    <p><strong>Status:</strong> {{ project.get_status_display }}</p>
+    <p><strong>Creator:</strong> <a href="{% url 'profiles:detail' username=project.creator.username %}">{{ project.creator.username }}</a></p>
+    <p><strong>Created:</strong> {{ project.created_at|date:"F d, Y" }}</p>
+    {% if project.start_date %}
+        <p><strong>Start Date:</strong> {{ project.start_date }}</p>
+    {% endif %}
+    {% if project.end_date %}
+        <p><strong>End Date:</strong> {{ project.end_date }}</p>
+    {% endif %}
+    {% if project.tags %}
+        <p><strong>Tags:</strong> {{ project.tags|join:", " }}</p>
+    {% endif %}
+    <p><strong>Members:</strong> {{ project.members.count }}</p>
+    
+    <div style="margin: 1.5rem 0;">
+        {{ project.description|linebreaks }}
+    </div>
+    
+    {% if user == project.creator %}
+        <a href="{% url 'projects:update' pk=project.pk %}" class="btn">Edit</a>
+        <a href="{% url 'projects:delete' pk=project.pk %}" class="btn btn-danger">Delete</a>
+    {% endif %}
+    {% if user.is_authenticated and user != project.creator %}
+        <a href="{% url 'projects:join' pk=project.pk %}" class="btn">
+            {% if user in project.members.all %}Leave Project{% else %}Join Project{% endif %}
+        </a>
+    {% endif %}
+    
+    <div style="margin-top: 1rem;">
+        <h3>Members ({{ project.members.count|add:1 }})</h3>
+        <p><a href="{% url 'profiles:detail' username=project.creator.username %}">{{ project.creator.username }}</a> (Creator)</p>
+        {% for member in project.members.all %}
+            <p><a href="{% url 'profiles:detail' username=member.username %}">{{ member.username }}</a></p>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="card">
+    <h2>Project Updates</h2>
+    {% if user.is_authenticated %}
+        <a href="{% url 'projects:update_create' pk=project.pk %}" class="btn">Add Update</a>
+    {% endif %}
+    {% for update in project.updates.all %}
+        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #ddd;">
+            <p><strong>{{ update.author.username }}</strong> - {{ update.created_at|date:"F d, Y g:i A" }}</p>
+            <p>{{ update.content|linebreaks }}</p>
+        </div>
+    {% empty %}
+        <p>No updates yet.</p>
+    {% endfor %}
+</div>
+{% endblock %}
+

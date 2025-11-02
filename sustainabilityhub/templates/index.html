@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Sustainability Hub{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Welcome to Sustainability Hub</h1>
+    <p>Connect, collaborate, and make a difference for our planet.</p>
+</div>
+
+<div class="grid">
+    <div class="card">
+        <h2>🌿 Forums</h2>
+        <p>Join discussions about sustainability, share ideas, and learn from others.</p>
+        <a href="{% url 'forums:topics' %}" class="btn">Browse Forums</a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'forums:topic_create' %}" class="btn btn-secondary">Start Discussion</a>
+        {% endif %}
+    </div>
+    
+    <div class="card">
+        <h2>🚀 Projects</h2>
+        <p>Collaborate on sustainability projects and track progress together.</p>
+        <a href="{% url 'projects:list' %}" class="btn">View Projects</a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'projects:create' %}" class="btn btn-secondary">Create Project</a>
+        {% endif %}
+    </div>
+    
+    <div class="card">
+        <h2>📅 Events</h2>
+        <p>Discover and participate in sustainability events in your area.</p>
+        <a href="{% url 'events:list' %}" class="btn">Find Events</a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'events:create' %}" class="btn btn-secondary">Organize Event</a>
+        {% endif %}
+    </div>
+    
+    <div class="card">
+        <h2>📚 Resources</h2>
+        <p>Access valuable resources, articles, and tools for sustainable living.</p>
+        <a href="{% url 'resources:list' %}" class="btn">Browse Resources</a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'resources:create' %}" class="btn btn-secondary">Share Resource</a>
+        {% endif %}
+    </div>
+</div>
+
+{% if user.is_authenticated %}
+    <div class="card">
+        <h2>Quick Actions</h2>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            <a href="{% url 'forums:topic_create' %}" class="btn">Start a Discussion</a>
+            <a href="{% url 'projects:create' %}" class="btn">Create a Project</a>
+            <a href="{% url 'events:create' %}" class="btn">Organize an Event</a>
+            <a href="{% url 'resources:create' %}" class="btn">Share a Resource</a>
+            <a href="{% url 'profiles:detail' username=user.username %}" class="btn btn-secondary">My Profile</a>
+            <a href="{% url 'notifications:list' %}" class="btn btn-secondary">
+                Notifications{% if unread_notifications_count > 0 %} ({{ unread_notifications_count }}){% endif %}
+            </a>
+        </div>
+    </div>
+    
+    <div class="card">
+        <h2>Your Activity</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+            <div>
+                <h3>Your Projects</h3>
+                <ul>
+                    {% for project in user.created_projects.all|slice:":5" %}
+                        <li><a href="{% url 'projects:detail' pk=project.pk %}">{{ project.title }}</a></li>
+                    {% empty %}
+                        <li>No projects yet</li>
+                    {% endfor %}
+                </ul>
+                {% if user.created_projects.count > 5 %}
+                    <a href="{% url 'projects:list' %}" class="btn btn-secondary">View All</a>
+                {% endif %}
+            </div>
+            <div>
+                <h3>Upcoming Events</h3>
+                <ul>
+                    {% for event in user.attending_events.all|slice:":5" %}
+                        {% if event.is_upcoming %}
+                            <li><a href="{% url 'events:detail' pk=event.pk %}">{{ event.title }}</a></li>
+                        {% endif %}
+                    {% empty %}
+                        <li>No upcoming events</li>
+                    {% endfor %}
+                </ul>
+                <a href="{% url 'events:list' %}" class="btn btn-secondary">View All</a>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="card">
+        <h2>Get Started</h2>
+        <p>Join our community to start making a difference!</p>
+        <a href="{% url 'register' %}" class="btn">Create Account</a>
+        <a href="{% url 'login' %}" class="btn btn-secondary">Login</a>
+    </div>
+{% endif %}
+{% endblock %}

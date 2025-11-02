@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Reports{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Reports</h1>
+    
+    {% for report in reports %}
+        <div class="card" style="margin-bottom: 1rem;">
+            <h3>Report #{{ report.id }} - {{ report.get_report_type_display }}</h3>
+            <p><strong>Status:</strong> {{ report.get_status_display }}</p>
+            <p><strong>Reason:</strong> {{ report.reason }}</p>
+            <p><strong>Reported:</strong> {{ report.created_at|date:"F d, Y g:i A" }}</p>
+            <a href="{% url 'moderation:report_detail' pk=report.pk %}" class="btn">View Details</a>
+        </div>
+    {% empty %}
+        <p>No reports.</p>
+    {% endfor %}
+</div>
+{% endblock %}
+

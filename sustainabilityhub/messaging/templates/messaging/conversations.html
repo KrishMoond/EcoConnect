@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Messages{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Conversations</h1>
+    
+    {% for conversation in conversations %}
+        <div class="card" style="margin-bottom: 1rem;">
+            <h3>
+                <a href="{% url 'messaging:conversation_detail' pk=conversation.pk %}">
+                    {% for participant in conversation.participants.all %}
+                        {% if participant != user %}
+                            {{ participant.username }}
+                        {% endif %}
+                    {% endfor %}
+                </a>
+            </h3>
+            {% if conversation.last_message_time %}
+                <p>Last message: {{ conversation.last_message_time|date:"F d, Y g:i A" }}</p>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>No conversations yet. Start a conversation with a user from their profile!</p>
+    {% endfor %}
+</div>
+{% endblock %}
+

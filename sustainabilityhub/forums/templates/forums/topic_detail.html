@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ topic.title }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>{{ topic.title }}</h1>
+    <p><strong>Author:</strong> <a href="{% url 'profiles:detail' username=topic.author.username %}">{{ topic.author.username }}</a></p>
+    <p><strong>Category:</strong> {{ topic.category.name|default:"Uncategorized" }}</p>
+    <p><strong>Created:</strong> {{ topic.created_at|date:"F d, Y g:i A" }}</p>
+    <p><strong>Views:</strong> {{ topic.views }}</p>
+    
+    <div style="margin: 1.5rem 0; padding: 1rem; background-color: #f9f9f9; border-radius: 4px;">
+        {{ topic.content|linebreaks }}
+    </div>
+    
+    {% if user == topic.author %}
+        <a href="{% url 'forums:topic_update' pk=topic.pk %}" class="btn">Edit</a>
+        <a href="{% url 'forums:topic_delete' pk=topic.pk %}" class="btn btn-danger">Delete</a>
+    {% endif %}
+    {% if user.is_authenticated %}
+        <a href="{% url 'forums:topic_like' pk=topic.pk %}" class="btn">
+            Like ({{ topic.likes.count }})
+        </a>
+        {% if user != topic.author %}
+            <a href="{% url 'messaging:start_conversation' user_id=topic.author.id %}" class="btn btn-secondary">Message Author</a>
+        {% endif %}
+    {% endif %}
+</div>
+
+<div class="card">
+    <h2>Replies</h2>
+    {% if user.is_authenticated and not topic.is_locked %}
+        <a href="{% url 'forums:post_create' topic_pk=topic.pk %}" class="btn">Reply</a>
+    {% endif %}
+    
+    {% for post in posts %}
+        <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #ddd;">
+            <p><strong><a href="{% url 'profiles:detail' username=post.author.username %}">{{ post.author.username }}</a></strong> - {{ post.created_at|date:"F d, Y g:i A" }}</p>
+            {% if post.is_edited %}
+                <small style="color: #666;">(edited)</small>
+            {% endif %}
+            <p>{{ post.content|linebreaks }}</p>
+            {% if user == post.author %}
+                <a href="{% url 'forums:post_update' pk=post.pk %}" class="btn" style="font-size: 0.9rem;">Edit</a>
+                <a href="{% url 'forums:post_delete' pk=post.pk %}" class="btn btn-danger" style="font-size: 0.9rem;">Delete</a>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>No replies yet. Be the first to reply!</p>
+    {% endfor %}
+</div>
+{% endblock %}
+

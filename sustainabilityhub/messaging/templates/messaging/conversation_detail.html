@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Conversation{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Conversation with 
+        {% for participant in conversation.participants.all %}
+            {% if participant != user %}
+                <a href="{% url 'profiles:detail' username=participant.username %}">{{ participant.username }}</a>
+            {% endif %}
+        {% endfor %}
+    </h1>
+    
+    <div style="max-height: 500px; overflow-y: auto; margin-bottom: 1rem; padding: 1rem; background-color: #f9f9f9; border-radius: 4px;">
+        {% for message in message_list %}
+            <div style="margin-bottom: 1rem; {% if message.sender == user %}text-align: right;{% endif %}">
+                <p><strong>{{ message.sender.username }}</strong> - {{ message.created_at|date:"M d, Y g:i A" }}</p>
+                <p style="display: inline-block; padding: 0.5rem 1rem; background-color: {% if message.sender == user %}#2d8659{% else %}white{% endif %}; color: {% if message.sender == user %}white{% else %}black{% endif %}; border-radius: 8px;">
+                    {{ message.content|linebreaks }}
+                </p>
+            </div>
+        {% empty %}
+            <p>No messages yet. Start the conversation!</p>
+        {% endfor %}
+    </div>
+    
+    <div>
+        <h3>Send a Message</h3>
+        <form method="post" action="{% url 'messaging:message_create' conversation_pk=conversation.pk %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <textarea name="content" rows="3" required></textarea>
+            </div>
+            <button type="submit" class="btn">Send</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+

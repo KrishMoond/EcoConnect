@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Submit Report{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Submit Report</h1>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                <label>{{ field.label }}:</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div style="color: #dc3545;">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <input type="hidden" name="content_type_id" value="{{ request.GET.content_type_id }}">
+        <input type="hidden" name="object_id" value="{{ request.GET.object_id }}">
+        <input type="hidden" name="next" value="{{ request.GET.next|default:'/' }}">
+        <button type="submit" class="btn">Submit Report</button>
+        <a href="{{ request.GET.next|default:'/' }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
+

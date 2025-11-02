@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Moderation Actions{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Moderation Actions</h1>
+    
+    {% for action in actions %}
+        <div class="card" style="margin-bottom: 1rem;">
+            <h3>{{ action.get_action_type_display }} - {{ action.target_user.username }}</h3>
+            <p><strong>Moderator:</strong> {{ action.moderator.username }}</p>
+            <p><strong>Reason:</strong> {{ action.reason }}</p>
+            <p><strong>Date:</strong> {{ action.created_at|date:"F d, Y g:i A" }}</p>
+            {% if action.expires_at %}
+                <p><strong>Expires:</strong> {{ action.expires_at|date:"F d, Y g:i A" }}</p>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p>No moderation actions.</p>
+    {% endfor %}
+</div>
+{% endblock %}
+

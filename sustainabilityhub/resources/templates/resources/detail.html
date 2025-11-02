@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ resource.title }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    {% if resource.image %}
+        <img src="{{ resource.image.url }}" alt="{{ resource.title }}" style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 4px; margin-bottom: 1rem;">
+    {% endif %}
+    <h1>{{ resource.title }}</h1>
+    <p><strong>Type:</strong> {{ resource.get_resource_type_display }}</p>
+    <p><strong>Category:</strong> {{ resource.category.name|default:"Uncategorized" }}</p>
+    <p><strong>Author:</strong> <a href="{% url 'profiles:detail' username=resource.author.username %}">{{ resource.author.username }}</a></p>
+    {% if user.is_authenticated and user != resource.author %}
+        <a href="{% url 'messaging:start_conversation' user_id=resource.author.id %}" class="btn btn-secondary">Contact Author</a>
+    {% endif %}
+    <p><strong>URL:</strong> <a href="{{ resource.url }}" target="_blank">{{ resource.url }}</a></p>
+    {% if average_rating %}
+        <p><strong>Rating:</strong> {{ average_rating|floatformat:1 }}/5</p>
+    {% endif %}
+    
+    <div style="margin: 1.5rem 0;">
+        {{ resource.description|linebreaks }}
+    </div>
+    
+    {% if user == resource.author %}
+        <a href="{% url 'resources:update' pk=resource.pk %}" class="btn">Edit</a>
+        <a href="{% url 'resources:delete' pk=resource.pk %}" class="btn btn-danger">Delete</a>
+    {% endif %}
+    
+    {% if user.is_authenticated %}
+        <div style="margin-top: 1.5rem; padding: 1rem; background-color: #f9f9f9; border-radius: 4px;">
+            <h3>Rate this Resource</h3>
+            <form method="post" action="{% url 'resources:rate' pk=resource.pk %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>Rating (1-5):</label>
+                    <select name="rating">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Review (optional):</label>
+                    <textarea name="review" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn">Submit Rating</button>
+            </form>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+

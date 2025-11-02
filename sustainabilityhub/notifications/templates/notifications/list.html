@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Notifications{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h1>Notifications {% if unread_count > 0 %}({{ unread_count }} unread){% endif %}</h1>
+        {% if unread_count > 0 %}
+            <a href="{% url 'notifications:mark_all_read' %}" class="btn">Mark All as Read</a>
+        {% endif %}
+    </div>
+    
+    {% for notification in notifications %}
+        <div class="card" style="margin-bottom: 1rem; {% if not notification.is_read %}background-color: #e8f5e9;{% endif %}">
+            <h3>{{ notification.title }}</h3>
+            <p>{{ notification.message }}</p>
+            <p><small>{{ notification.created_at|date:"F d, Y g:i A" }}</small></p>
+            <div>
+                {% if notification.url %}
+                    <a href="{% url 'notifications:mark_read' pk=notification.pk %}" class="btn">View</a>
+                {% else %}
+                    <a href="{% url 'notifications:mark_read' pk=notification.pk %}" class="btn">Mark as Read</a>
+                {% endif %}
+                <a href="{% url 'notifications:delete' pk=notification.pk %}" class="btn btn-danger">Delete</a>
+            </div>
+        </div>
+    {% empty %}
+        <p>No notifications.</p>
+    {% endfor %}
+</div>
+{% endblock %}
+

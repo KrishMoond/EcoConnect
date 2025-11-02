@@ -1,0 +1,5 @@
+Django>=4.2,<5.0
+djangorestframework>=3.14.0
+# Pillow is optional - FileField works without it
+# Pillow>=10.0.0  # Uncomment if you want image-specific features
+

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if object %}Edit{% else %}Add{% endif %} Resource{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>{% if object %}Edit{% else %}Add{% endif %} Resource</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                <label>{{ field.label }}:</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div style="color: #dc3545;">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn">Save</button>
+        <a href="{% if object %}{% url 'resources:detail' pk=object.pk %}{% else %}{% url 'resources:list' %}{% endif %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
+

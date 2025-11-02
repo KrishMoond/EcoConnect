@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Project Update{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Add Project Update</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>Content:</label>
+            {{ form.content }}
+        </div>
+        <button type="submit" class="btn">Post Update</button>
+        <a href="{% url 'projects:detail' pk=project.pk %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
+

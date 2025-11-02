@@ -1,2 +1,35 @@
-venv
+# Virtual environment
+venv/
+
+# Environment variables
 .env
+
+# Django
+*.pyc
+__pycache__/
+db.sqlite3
+/media/
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+
+# Documentation and batch files (ignored)
+BACKEND_DATA_STORAGE_VERIFICATION.md
+FINAL_DIAGNOSIS.md
+FINAL_SOLUTION.md
+FIX_ERRORS.md
+INTEGRATION.md
+QUICK_START.md
+README_ERROR_FIX.md
+ROOT_CAUSE_AND_FIX.md
+TERMINAL_ERROR_EXPLANATION.md
+VERIFICATION_CHECKLIST.md
+VERIFICATION_REPORT.md
+VERIFICATION_SUMMARY.md
+WHY_ERRORS_KEEP_OCCURRING.md
+runserver.bat
+START_SERVER.bat
+DIAGNOSE_ERRORS.bat

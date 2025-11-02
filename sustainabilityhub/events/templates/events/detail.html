@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ event.title }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    {% if event.image %}
+        <img src="{{ event.image.url }}" alt="{{ event.title }}" style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 4px; margin-bottom: 1rem;">
+    {% endif %}
+    <h1>{{ event.title }}</h1>
+    <p><strong>Type:</strong> {{ event.get_event_type_display }}</p>
+    <p><strong>Organizer:</strong> <a href="{% url 'profiles:detail' username=event.organizer.username %}">{{ event.organizer.username }}</a></p>
+    <p><strong>Start:</strong> {{ event.start_date|date:"F d, Y g:i A" }}</p>
+    {% if event.end_date %}
+        <p><strong>End:</strong> {{ event.end_date|date:"F d, Y g:i A" }}</p>
+    {% endif %}
+    <p><strong>Location:</strong> {{ event.location }}</p>
+    {% if event.is_online and event.online_link %}
+        <p><strong>Online Link:</strong> <a href="{{ event.online_link }}" target="_blank">{{ event.online_link }}</a></p>
+    {% endif %}
+    <p><strong>Participants:</strong> {{ event.participant_count }}{% if event.max_participants %}/{{ event.max_participants }}{% endif %}</p>
+    
+    <div style="margin: 1.5rem 0;">
+        {{ event.description|linebreaks }}
+    </div>
+    
+    {% if user == event.organizer %}
+        <a href="{% url 'events:update' pk=event.pk %}" class="btn">Edit</a>
+        <a href="{% url 'events:delete' pk=event.pk %}" class="btn btn-danger">Delete</a>
+    {% endif %}
+    {% if user.is_authenticated and user != event.organizer %}
+        <a href="{% url 'events:register' pk=event.pk %}" class="btn">
+            {% if user in event.participants.all %}Unregister{% else %}Register{% endif %}
+        </a>
+    {% endif %}
+    
+    <div style="margin-top: 1rem;">
+        <h3>Participants ({{ event.participant_count }})</h3>
+        <p><strong>Organizer:</strong> <a href="{% url 'profiles:detail' username=event.organizer.username %}">{{ event.organizer.username }}</a></p>
+        {% if event.participants.all %}
+            <p><strong>Attendees:</strong></p>
+            <ul>
+                {% for participant in event.participants.all %}
+                    <li><a href="{% url 'profiles:detail' username=participant.username %}">{{ participant.username }}</a></li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
