@@ -16,4 +16,5 @@ urlpatterns = [
     path('toggle-user/<int:pk>/', views.toggle_user_status, name='toggle_user_status'),
     path('user-detail/<int:pk>/', views.user_detail, name='user_detail'),
     path('my-warnings/', views.my_warnings, name='my_warnings'),
+    path('profile/', views.profile, name='profile'),
 ]

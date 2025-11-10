@@ -832,8 +832,11 @@
                                     <div style="font-weight: 600; color: var(--accent-2);">{{ user.username }}</div>
                                     <div style="font-size: 0.85rem; color: var(--muted); margin-top: 0.25rem;">{{ user.email|default:"No email" }}</div>
                                 </div>
-                                <a href="{% url 'profiles:detail' username=user.username %}" style="display: block; padding: 0.75rem 1rem; color: var(--muted); text-decoration: none; border-radius: 8px; transition: background 0.2s;">
-                                    👤 View Profile
+                                <a href="{% url 'accounts:profile' %}" style="display: block; padding: 0.75rem 1rem; color: var(--muted); text-decoration: none; border-radius: 8px; transition: background 0.2s;">
+                                    👤 My Profile
+                                </a>
+                                <a href="{% url 'accounts:my_warnings' %}" style="display: block; padding: 0.75rem 1rem; color: var(--muted); text-decoration: none; border-radius: 8px; transition: background 0.2s;">
+                                    ⚠️ My Warnings
                                 </a>
                                 <a href="{% url 'profiles:edit' %}" style="display: block; padding: 0.75rem 1rem; color: var(--muted); text-decoration: none; border-radius: 8px; transition: background 0.2s;">
                                     ⚙️ Edit Profile

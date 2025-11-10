@@ -110,6 +110,7 @@ class ProjectDeleteView(LoginRequiredMixin, DeleteView):
 
 def request_to_join(request, pk):
     """Create a join request instead of direct join"""
+    from notifications.utils import create_notification
     project = get_object_or_404(Project, pk=pk)
     
     if not request.user.is_authenticated:
@@ -143,6 +144,15 @@ def request_to_join(request, pk):
         message=message
     )
     
+    # Notify project creator
+    create_notification(
+        recipient=project.creator,
+        notification_type='project_join_request',
+        title='New Project Join Request',
+        message=f'{request.user.username} wants to join "{project.title}"',
+        url=f'/projects/{project.pk}/'
+    )
+    
     messages.success(request, f'Join request sent to {project.creator.username}. You will be notified when they respond.')
     return redirect('projects:detail', pk=pk)
 
@@ -171,6 +181,7 @@ class ManageJoinRequestsView(LoginRequiredMixin, ListView):
 
 def approve_request(request, pk):
     """Approve a join request"""
+    from notifications.utils import create_notification
     join_request = get_object_or_404(ProjectJoinRequest, pk=pk)
     
     if join_request.project.creator != request.user:
@@ -190,12 +201,22 @@ def approve_request(request, pk):
     # Add user to project members
     join_request.project.members.add(join_request.user)
     
+    # Notify user
+    create_notification(
+        recipient=join_request.user,
+        notification_type='project_request_approved',
+        title='Project Request Approved',
+        message=f'Your request to join "{join_request.project.title}" was approved',
+        url=f'/projects/{join_request.project.pk}/'
+    )
+    
     messages.success(request, f'You approved {join_request.user.username}\'s request to join.')
     return redirect('projects:manage_requests', pk=join_request.project.pk)
 
 
 def reject_request(request, pk):
     """Reject a join request"""
+    from notifications.utils import create_notification
     join_request = get_object_or_404(ProjectJoinRequest, pk=pk)
     
     if join_request.project.creator != request.user:
@@ -211,6 +232,15 @@ def reject_request(request, pk):
     join_request.reviewed_at = timezone.now()
     join_request.reviewed_by = request.user
     join_request.save()
+    
+    # Notify user
+    create_notification(
+        recipient=join_request.user,
+        notification_type='project_request_rejected',
+        title='Project Request Declined',
+        message=f'Your request to join "{join_request.project.title}" was declined',
+        url=f'/projects/{join_request.project.pk}/'
+    )
     
     messages.info(request, f'You declined {join_request.user.username}\'s request.')
     return redirect('projects:manage_requests', pk=join_request.project.pk)

@@ -161,6 +161,9 @@ def toggle_user_status(request, pk):
     
     return redirect('accounts:admin_users')
 
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def my_warnings(request):
     """View for users to see their own warnings"""
     from django.utils import timezone
@@ -171,6 +174,20 @@ def my_warnings(request):
     # Get all active warnings
     warnings = request.user.warnings.filter(is_active=True).order_by('-created_at')
     return render(request, 'accounts/my_warnings.html', {'warnings': warnings})
+
+@login_required
+def profile(request):
+    """View for users to see their own profile"""
+    user = request.user
+    stats = {
+        'topics_count': user.topics.count(),
+        'forum_posts_count': user.forum_posts.count(),
+        'created_projects_count': user.created_projects.count(),
+        'joined_projects_count': user.joined_projects.count(),
+        'warnings_count': user.warnings.filter(is_active=True).count(),
+    }
+    warnings = user.warnings.filter(is_active=True).order_by('-created_at')[:5]
+    return render(request, 'accounts/profile.html', {'stats': stats, 'warnings': warnings})
 
 @user_passes_test(lambda u: u.is_superuser)
 def user_detail(request, pk):
