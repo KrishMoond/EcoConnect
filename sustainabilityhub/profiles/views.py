@@ -38,15 +38,14 @@ def profile_edit(request):
     profile, _ = Profile.objects.get_or_create(user=request.user)
     
     if request.method == 'POST':
-        request.user.first_name = request.POST.get('first_name', '')
-        request.user.last_name = request.POST.get('last_name', '')
-        request.user.email = request.POST.get('email', '')
-        request.user.save()
-        
         profile.bio = request.POST.get('bio', '')
         profile.location = request.POST.get('location', '')
         profile.website = request.POST.get('website', '')
         profile.save()
+        
+        if request.FILES.get('avatar'):
+            request.user.avatar = request.FILES['avatar']
+            request.user.save()
         
         messages.success(request, 'Profile updated successfully!')
         return redirect('profiles:detail', username=request.user.username)
