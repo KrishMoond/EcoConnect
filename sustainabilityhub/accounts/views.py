@@ -2,11 +2,182 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
 from django.contrib.auth import get_user_model, login
+
+from django.utils import timezone
+from datetime import timedelta
 from .forms import CustomUserCreationForm
-from .models import UserWarning
+from .models import UserWarning, OTP
 from notifications.utils import create_notification
 
 User = get_user_model()
+
+def otp_login_request(request):
+    if request.method == 'POST':
+        email = request.POST.get('email', '').strip()
+        
+        if not email:
+            messages.error(request, 'Please enter your email address.')
+            return render(request, 'accounts/otp_login.html')
+        
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            messages.error(request, 'No account found with this email. Please check your email or register.')
+            return render(request, 'accounts/otp_login.html')
+        
+        # Generate OTP
+        otp_code = OTP.generate_otp()
+        expires_at = timezone.now() + timedelta(minutes=10)
+        
+        # Delete old OTPs for this email
+        OTP.objects.filter(email=email).delete()
+        
+        # Create new OTP
+        OTP.objects.create(
+            email=email,
+            otp_code=otp_code,
+            expires_at=expires_at
+        )
+        
+        # Print OTP to terminal
+        print(f'\n{"="*60}')
+        print(f'🔐 OTP LOGIN REQUEST')
+        print(f'{"="*60}')
+        print(f'Email: {email}')
+        print(f'OTP Code: {otp_code}')
+        print(f'Expires: {expires_at.strftime("%Y-%m-%d %H:%M:%S")}')
+        print(f'{"="*60}\n')
+        
+        request.session['otp_email'] = email
+        messages.success(request, f'OTP generated! Check the terminal/console for your OTP code.')
+        return redirect('accounts:otp_verify')
+    
+    return render(request, 'accounts/otp_login.html')
+
+def otp_verify(request):
+    email = request.session.get('otp_email')
+    otp_type = request.session.get('otp_type', 'login')
+    
+    if not email:
+        messages.error(request, 'Please request an OTP first.')
+        return redirect('accounts:otp_login')
+    
+    if request.method == 'POST':
+        otp_code = request.POST.get('otp_code', '').strip()
+        
+        try:
+            otp = OTP.objects.get(email=email, otp_code=otp_code)
+            
+            if not otp.is_valid():
+                messages.error(request, 'OTP has expired or already been used.')
+                return render(request, 'accounts/otp_verify.html', {'email': email, 'otp_type': otp_type})
+            
+            # Mark OTP as used
+            otp.is_used = True
+            otp.save()
+            
+            if otp_type == 'reset':
+                # Redirect to password reset form
+                request.session['reset_email'] = email
+                del request.session['otp_email']
+                del request.session['otp_type']
+                messages.success(request, 'OTP verified! Now set your new password.')
+                return redirect('accounts:reset_password')
+            else:
+                # Log the user in
+                user = User.objects.get(email=email)
+                login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+                
+                # Clear session
+                del request.session['otp_email']
+                if 'otp_type' in request.session:
+                    del request.session['otp_type']
+                
+                messages.success(request, 'Login successful!')
+                return redirect('home')
+            
+        except OTP.DoesNotExist:
+            messages.error(request, 'Invalid OTP code.')
+    
+    return render(request, 'accounts/otp_verify.html', {'email': email, 'otp_type': otp_type})
+
+def forgot_password(request):
+    if request.method == 'POST':
+        email = request.POST.get('email', '').strip()
+        
+        if not email:
+            messages.error(request, 'Please enter your email address.')
+            return render(request, 'accounts/forgot_password.html')
+        
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            messages.error(request, 'No account found with this email.')
+            return render(request, 'accounts/forgot_password.html')
+        
+        # Generate OTP
+        otp_code = OTP.generate_otp()
+        expires_at = timezone.now() + timedelta(minutes=10)
+        
+        # Delete old OTPs for this email
+        OTP.objects.filter(email=email).delete()
+        
+        # Create new OTP
+        OTP.objects.create(
+            email=email,
+            otp_code=otp_code,
+            expires_at=expires_at
+        )
+        
+        # Print OTP to terminal
+        print(f'\n{"="*60}')
+        print(f'🔑 PASSWORD RESET OTP')
+        print(f'{"="*60}')
+        print(f'Email: {email}')
+        print(f'OTP Code: {otp_code}')
+        print(f'Expires: {expires_at.strftime("%Y-%m-%d %H:%M:%S")}')
+        print(f'{"="*60}\n')
+        
+        request.session['otp_email'] = email
+        request.session['otp_type'] = 'reset'
+        messages.success(request, 'OTP generated! Check the terminal for your OTP code.')
+        return redirect('accounts:otp_verify')
+    
+    return render(request, 'accounts/forgot_password.html')
+
+def reset_password(request):
+    email = request.session.get('reset_email')
+    if not email:
+        messages.error(request, 'Invalid password reset session.')
+        return redirect('accounts:forgot_password')
+    
+    if request.method == 'POST':
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
+        
+        if password1 != password2:
+            messages.error(request, 'Passwords do not match.')
+            return render(request, 'accounts/reset_password.html', {'email': email})
+        
+        if len(password1) < 8:
+            messages.error(request, 'Password must be at least 8 characters long.')
+            return render(request, 'accounts/reset_password.html', {'email': email})
+        
+        try:
+            user = User.objects.get(email=email)
+            user.set_password(password1)
+            user.save()
+            
+            # Clear session
+            del request.session['reset_email']
+            
+            messages.success(request, 'Password reset successful! You can now login with your new password.')
+            return redirect('accounts:login')
+        except User.DoesNotExist:
+            messages.error(request, 'User not found.')
+            return redirect('accounts:forgot_password')
+    
+    return render(request, 'accounts/reset_password.html', {'email': email})
 
 def register(request):
     if request.method == 'POST':

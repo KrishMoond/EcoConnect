@@ -27,11 +27,12 @@
         </div>
         
         <div class="form-group">
-            <label for="{{ form.email.id_for_label }}">Email (Optional)</label>
+            <label for="{{ form.email.id_for_label }}">Email (Required for OTP login)</label>
             {{ form.email }}
             {% if form.email.errors %}
                 <div style="color: #dc3545; margin-top: 0.5rem; font-size: 0.9rem;">{{ form.email.errors }}</div>
             {% endif %}
+            <small style="color: var(--muted); font-size: 0.85rem; display: block; margin-top: 0.5rem;">Required for OTP-based login</small>
         </div>
         
         <div class="form-group">

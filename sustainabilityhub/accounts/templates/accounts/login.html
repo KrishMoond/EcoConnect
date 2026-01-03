@@ -48,9 +48,18 @@
         </div>
         
         <button type="submit" class="btn" style="width: 100%; padding: 0.85rem; margin-top: 1rem; font-size: 1rem;">Login</button>
+        
+        <div style="text-align: center; margin-top: 1rem;">
+            <a href="{% url 'accounts:forgot_password' %}" style="color: var(--accent-2); text-decoration: none; font-size: 0.9rem;">Forgot Password?</a>
+        </div>
     </form>
     
     <div style="text-align: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1);">
+        <p style="color: var(--muted); margin-bottom: 1rem;">Or login with OTP</p>
+        <a href="{% url 'accounts:otp_login' %}" class="btn btn-secondary" style="display: inline-block; padding: 0.65rem 1.5rem;">🔐 Login with OTP</a>
+    </div>
+    
+    <div style="text-align: center; margin-top: 1.5rem;">
         <p style="color: var(--muted);">Don't have an account? <a href="{% url 'register' %}" style="color: var(--accent-2); text-decoration: none; font-weight: 600;">Sign up</a></p>
     </div>
 </div>

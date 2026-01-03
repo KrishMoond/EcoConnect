@@ -197,22 +197,16 @@
 
         .navbar-links a:hover {
             color: var(--bright-green);
-            background: linear-gradient(135deg, rgba(26,127,90,0.2), rgba(0,119,190,0.15));
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,255,136,0.2);
+            background: rgba(26,127,90,0.15);
         }
         
         .navbar-links a.btn {
-            background: linear-gradient(135deg, var(--forest-green), var(--ocean-blue));
+            background: var(--forest-green);
             color: white;
-            border: 1px solid rgba(0,255,136,0.3);
-            box-shadow: 0 0 20px rgba(0,255,136,0.3);
         }
         
         .navbar-links a.btn:hover {
-            background: linear-gradient(135deg, var(--ocean-blue), var(--forest-green));
-            transform: translateY(-2px) scale(1.05);
-            box-shadow: 0 6px 25px rgba(0,255,136,0.5), 0 0 40px rgba(0,212,255,0.3);
+            background: #1a9068;
         }
         
         /* Enhanced Notification Styles */
@@ -398,43 +392,25 @@
         .btn {
             display: inline-block;
             padding: 0.75rem 1.5rem;
-            background: linear-gradient(135deg, var(--forest-green) 0%, var(--ocean-blue) 100%);
+            background: var(--forest-green);
             color: white !important;
             border: none;
-            border-radius: 14px;
+            border-radius: 4px;
             cursor: pointer;
             font-size: 0.95rem;
-            font-weight: 700;
-            transition: all var(--transition);
-            position: relative;
-            overflow: hidden;
+            font-weight: 600;
+            transition: background 0.2s ease;
             text-decoration: none;
-            box-shadow: 0 4px 20px rgba(0,255,136,0.3), 0 0 40px rgba(0,119,190,0.2);
-        }
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.2);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-        .btn:hover::before {
-            width: 300px;
-            height: 300px;
         }
         .btn:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 8px 30px rgba(0,255,136,0.5), 0 0 60px rgba(0,212,255,0.4);
+            background: #1a9068;
             color: white !important;
         }
-        .btn:active{ transform: translateY(0); opacity: 1 !important; visibility: visible !important; }
-        .btn-secondary{ background: linear-gradient(135deg,#495057,#343a40); }
-        .btn-danger{ background: linear-gradient(135deg,#dc3545,#c82333); }
+        .btn:active{ transform: none; opacity: 1 !important; visibility: visible !important; }
+        .btn-secondary{ background: #495057; }
+        .btn-secondary:hover{ background: #5a6268; }
+        .btn-danger{ background: #dc3545; }
+        .btn-danger:hover{ background: #c82333; }
         .btn.active {
             background: linear-gradient(135deg, var(--bright-green), var(--cyan)) !important;
             color: white !important;
@@ -449,42 +425,15 @@
 
         /* Card */
         .card {
-            background: var(--card-bg);
-            border-radius: 24px;
-            padding: 1.8rem;
+            background: rgba(10,21,32,0.6);
+            border-radius: 8px;
+            padding: 1.5rem;
             margin-bottom: 1.5rem;
-            box-shadow: 
-                0 10px 40px rgba(0,0,0,0.4),
-                inset 0 1px 0 rgba(255,255,255,0.1),
-                0 0 0 1px rgba(0,255,136,0.1);
-            border: 1px solid transparent;
-            border-image: linear-gradient(135deg, rgba(26,127,90,0.3), rgba(0,119,190,0.3)) 1;
-            backdrop-filter: blur(10px);
-            transition: all var(--transition);
-            position: relative;
-            overflow: hidden;
-        }
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0,255,136,0.1), transparent);
-            transition: left 0.5s;
-        }
-        .card:hover::before {
-            left: 100%;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: border-color 0.2s ease;
         }
         .card:hover{ 
-            transform: translateY(-8px) scale(1.01); 
-            box-shadow: 
-                0 20px 60px rgba(0,0,0,0.5),
-                0 0 80px rgba(0,255,136,0.2),
-                0 0 120px rgba(0,212,255,0.15),
-                inset 0 1px 0 rgba(255,255,255,0.2);
-            border-image: linear-gradient(135deg, rgba(0,255,136,0.5), rgba(0,212,255,0.5)) 1;
+            border-color: rgba(26,127,90,0.5);
         }
         
         /* Content spacing */
@@ -768,19 +717,19 @@
         <nav class="navbar" role="navigation" aria-label="Main navigation">
             <div class="navbar-container">
                 <div class="nav-left">
-                    <a href="{% url 'home' %}" class="navbar-brand" aria-label="EcoConnect home">🌱 EcoConnect</a>
+                    <a href="{% url 'home' %}" class="navbar-brand" aria-label="EcoConnect home">EcoConnect</a>
                 </div>
 
                 <div id="primary-nav" class="navbar-links" role="menu" aria-hidden="true">
                     {% if user.is_authenticated %}
                         <!-- Authenticated User Navbar -->
-                        <a role="menuitem" href="{% url 'community:dashboard' %}">🌱 Sustainability Hub</a>
-                        <a role="menuitem" href="{% url 'forums:topics' %}">🌿 Forums</a>
-                        <a role="menuitem" href="{% url 'projects:list' %}">🚀 Projects</a>
-                        <a role="menuitem" href="{% url 'events:list' %}">📅 Events</a>
-                        <a role="menuitem" href="{% url 'resources:list' %}">📚 Resources</a>
+                        <a role="menuitem" href="{% url 'community:dashboard' %}">Sustainability Hub</a>
+                        <a role="menuitem" href="{% url 'forums:topics' %}">Forums</a>
+                        <a role="menuitem" href="{% url 'projects:list' %}">Projects</a>
+                        <a role="menuitem" href="{% url 'events:list' %}">Events</a>
+                        <a role="menuitem" href="{% url 'resources:list' %}">Resources</a>
                         <a role="menuitem" href="{% url 'messaging:conversations' %}" class="nav-notification-link" data-type="messages" style="position: relative; transition: all 0.3s ease;">
-                            <span class="nav-icon">💬</span> Messages
+                            Messages
                             {% if unread_messages_count > 0 %}
                                 <span class="notification-counter active" data-count="{{ unread_messages_count }}">{{ unread_messages_count }}</span>
                             {% else %}
@@ -788,7 +737,7 @@
                             {% endif %}
                         </a>
                         <a role="menuitem" href="{% url 'notifications:list' %}" class="nav-notification-link" data-type="notifications" style="position: relative; transition: all 0.3s ease;">
-                            <span class="nav-icon">🔔</span> Notifications
+                            Notifications
                             {% if unread_notifications_count > 0 %}
                                 <span class="notification-counter active" data-count="{{ unread_notifications_count }}">{{ unread_notifications_count }}</span>
                             {% else %}
@@ -799,21 +748,21 @@
                             <!-- Admin Dropdown -->
                             <div class="admin-dropdown" style="position: relative; display: inline-block;">
                                 <button class="admin-dropdown-btn" id="admin-dropdown-toggle" aria-expanded="false" aria-haspopup="true" style="background: transparent; border: none; cursor: pointer; padding: 0.5rem 0.75rem; border-radius: 8px; display: flex; align-items: center; gap: 0.5rem; color: #ffd700; font-weight: 600; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,215,0,0.1)'" onmouseout="this.style.background='transparent'">
-                                    <span>🛡️</span> Admin <span style="font-size: 0.8rem;">▼</span>
+                                    Admin <span style="font-size: 0.8rem;">▼</span>
                                 </button>
                                 <div class="admin-dropdown-menu" id="admin-dropdown-menu" style="display: none; position: absolute; top: calc(100% + 8px); right: 0; background: rgba(10,16,28,0.98); backdrop-filter: blur(12px); border-radius: 12px; padding: 0.5rem; min-width: 200px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid rgba(255,215,0,0.2); z-index: 1000;">
                                     <a href="{% url 'admin_dashboard' %}" style="display: block; padding: 0.75rem 1rem; color: #ffd700; text-decoration: none; border-radius: 8px; transition: background 0.2s; font-weight: 600;">
-                                        🏠 Dashboard
+                                        Dashboard
                                     </a>
                                     <a href="{% url 'accounts:admin_users' %}" style="display: block; padding: 0.75rem 1rem; color: #17a2b8; text-decoration: none; border-radius: 8px; transition: background 0.2s;">
-                                        👥 User Management
+                                        User Management
                                     </a>
                                     <a href="{% url 'rms:admin_reports' %}" style="display: block; padding: 0.75rem 1rem; color: #ff6b6b; text-decoration: none; border-radius: 8px; transition: background 0.2s;">
-                                        📋 Reports & Issues
+                                        Reports & Issues
                                     </a>
                                     <div style="border-top: 1px solid rgba(255,255,255,0.1); margin: 0.5rem 0;"></div>
                                     <a href="/admin/" style="display: block; padding: 0.75rem 1rem; color: var(--muted); text-decoration: none; border-radius: 8px; transition: background 0.2s; font-size: 0.9rem;">
-                                        ⚙️ Django Admin
+                                        Django Admin
                                     </a>
                                 </div>
                             </div>
@@ -836,34 +785,34 @@
                                     <div style="font-size: 0.85rem; color: var(--muted); margin-top: 0.25rem;">{{ user.email|default:"No email" }}</div>
                                 </div>
                                 <a href="{% url 'accounts:profile' %}" style="display: block; padding: 0.75rem 1rem; color: var(--muted); text-decoration: none; border-radius: 8px; transition: background 0.2s;">
-                                    👤 My Profile
+                                    My Profile
                                 </a>
                                 <a href="{% url 'accounts:my_warnings' %}" style="display: block; padding: 0.75rem 1rem; color: var(--muted); text-decoration: none; border-radius: 8px; transition: background 0.2s;">
-                                    ⚠️ My Warnings
+                                    My Warnings
                                 </a>
                                 <a href="{% url 'profiles:edit' %}" style="display: block; padding: 0.75rem 1rem; color: var(--muted); text-decoration: none; border-radius: 8px; transition: background 0.2s;">
-                                    ⚙️ Edit Profile
+                                    Edit Profile
                                 </a>
                                 {% if user.is_superuser %}
                                     <a href="{% url 'admin_dashboard' %}" style="display: block; padding: 0.75rem 1rem; color: #ffd700; text-decoration: none; border-radius: 8px; transition: background 0.2s;">
-                                        🛡️ Admin Dashboard
+                                        Admin Dashboard
                                     </a>
                                 {% endif %}
                                 <form method="post" action="{% url 'logout' %}" style="margin: 0; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 0.5rem;">
                                     {% csrf_token %}
                                     <button type="submit" style="display: block; width: 100%; padding: 0.75rem 1rem; color: #ffb3b3; background: transparent; border: none; text-align: left; border-radius: 8px; transition: background 0.2s; cursor: pointer; font-size: inherit;">
-                                        🚪 Logout
+                                        Logout
                                     </button>
                                 </form>
                             </div>
                         </div>
                     {% else %}
                         <!-- Guest User Navbar - Only Public Links -->
-                        <a role="menuitem" href="{% url 'community:dashboard' %}">🌱 Sustainability Hub</a>
-                        <a role="menuitem" href="{% url 'forums:topics' %}">🌿 Forums</a>
-                        <a role="menuitem" href="{% url 'projects:list' %}">🚀 Projects</a>
-                        <a role="menuitem" href="{% url 'events:list' %}">📅 Events</a>
-                        <a role="menuitem" href="{% url 'resources:list' %}">📚 Resources</a>
+                        <a role="menuitem" href="{% url 'community:dashboard' %}">Sustainability Hub</a>
+                        <a role="menuitem" href="{% url 'forums:topics' %}">Forums</a>
+                        <a role="menuitem" href="{% url 'projects:list' %}">Projects</a>
+                        <a role="menuitem" href="{% url 'events:list' %}">Events</a>
+                        <a role="menuitem" href="{% url 'resources:list' %}">Resources</a>
                         <a role="menuitem" href="{% url 'login' %}" class="btn" style="padding: 0.5rem 1rem; margin-left: 0.5rem;">Login</a>
                         <a role="menuitem" href="{% url 'register' %}" class="btn" style="padding: 0.5rem 1rem;">Sign Up</a>
                     {% endif %}
@@ -890,12 +839,10 @@
             <div style="max-width: 1200px; margin: 0 auto;">
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
                     <div>
-                        <h3 style="color: var(--accent-2); margin-bottom: 1rem; font-size: 1.1rem;">🌱 EcoConnect</h3>
+                        <h3 style="color: var(--accent-2); margin-bottom: 1rem; font-size: 1.1rem;">EcoConnect</h3>
                         <p style="color: var(--muted); line-height: 1.6; margin-bottom: 1rem;">Building a sustainable future through collaboration, innovation, and community action.</p>
                         <div style="display: flex; gap: 0.75rem;">
-                            <a href="#" style="color: var(--accent-2); font-size: 1.2rem; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">🌍</a>
-                            <a href="#" style="color: var(--accent-2); font-size: 1.2rem; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">📧</a>
-                            <a href="#" style="color: var(--accent-2); font-size: 1.2rem; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'">📱</a>
+
                         </div>
                     </div>
                     
@@ -913,20 +860,20 @@
                         <h4 style="color: var(--accent-2); margin-bottom: 1rem;">Support</h4>
                         <div style="display: flex; flex-direction: column; gap: 0.5rem;">
                             {% if user.is_authenticated %}
-                                <a href="{% url 'rms:create' %}" style="color: var(--muted); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--accent-2)'" onmouseout="this.style.color='var(--muted)'">📝 Report Issue</a>
-                                <a href="{% url 'rms:my_reports' %}" style="color: var(--muted); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--accent-2)'" onmouseout="this.style.color='var(--muted)'">📋 My Reports</a>
+                                <a href="{% url 'rms:create' %}" style="color: var(--muted); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--accent-2)'" onmouseout="this.style.color='var(--muted)'">Report Issue</a>
+                                <a href="{% url 'rms:my_reports' %}" style="color: var(--muted); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--accent-2)'" onmouseout="this.style.color='var(--muted)'">My Reports</a>
                             {% endif %}
-                            <a href="#" style="color: var(--muted); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--accent-2)'" onmouseout="this.style.color='var(--muted)'">❓ Help Center</a>
-                            <a href="#" style="color: var(--muted); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--accent-2)'" onmouseout="this.style.color='var(--muted)'">📞 Contact Us</a>
+                            <a href="#" style="color: var(--muted); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--accent-2)'" onmouseout="this.style.color='var(--muted)'">Help Center</a>
+                            <a href="#" style="color: var(--muted); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--accent-2)'" onmouseout="this.style.color='var(--muted)'">Contact Us</a>
                         </div>
                     </div>
                     
                     <div>
                         <h4 style="color: var(--accent-2); margin-bottom: 1rem;">Community Stats</h4>
                         <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.9rem;">
-                            <span style="color: var(--muted);">🌱 Growing Together</span>
-                            <span style="color: var(--muted);">♻️ Sustainable Actions</span>
-                            <span style="color: var(--muted);">🤝 Global Community</span>
+                            <span style="color: var(--muted);">Growing Together</span>
+                            <span style="color: var(--muted);">Sustainable Actions</span>
+                            <span style="color: var(--muted);">Global Community</span>
                         </div>
                     </div>
                 </div>
